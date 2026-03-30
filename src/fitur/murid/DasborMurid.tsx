@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import {
   getClassAnnouncements,
@@ -15,17 +15,29 @@ import {
   Clock,
   Megaphone,
   XCircle,
+  Calendar,
+  User,
+  BookOpen,
+  Image as ImageIcon,
+  X,
 } from 'lucide-react';
 import { useStoreVersion } from '../../hooks/useStoreVersion';
 
 const dayNames = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
 
+// Types
+interface PreviewImageState {
+  src: string;
+  title: string;
+}
+
 export default function StudentDashboard() {
   const { user } = useAuth();
   const storeVersion = useStoreVersion();
   const [currentDayOfWeek, setCurrentDayOfWeek] = useState(() => new Date().getDay());
-  const [previewImage, setPreviewImage] = useState<{ src: string; title: string } | null>(null);
+  const [previewImage, setPreviewImage] = useState<PreviewImageState | null>(null);
 
+  // Auto update day at midnight
   useEffect(() => {
     let intervalId: number | undefined;
     const now = new Date();
@@ -48,8 +60,17 @@ export default function StudentDashboard() {
     };
   }, []);
 
-  const student = useMemo(() => getStudents().find(s => s.id === user?.id), [user, storeVersion]);
-  const studentInitial = (student?.name || '?').charAt(0).toUpperCase();
+  // Data memoization
+  const student = useMemo(() => 
+    getStudents().find(s => s.id === user?.id), 
+    [user, storeVersion]
+  );
+
+  const studentInitial = useMemo(() => 
+    (student?.name || '?').charAt(0).toUpperCase(),
+    [student]
+  );
+
   const className = useMemo(() => {
     if (!student) return '';
     return getClasses().find(c => c.id === student.classId)?.name || '';
@@ -89,6 +110,7 @@ export default function StudentDashboard() {
     return getPengumumanAdminUntukKelas(student.classId).slice(0, 5);
   }, [student, storeVersion]);
 
+  // Statistics
   const stats = useMemo(() => {
     const hadir = allAttendance.filter(a => a.status === 'hadir').length;
     const izin = allAttendance.filter(a => a.status === 'izin').length;
@@ -99,11 +121,12 @@ export default function StudentDashboard() {
     return { hadir, izin, sakit, alpha, total, percentage };
   }, [allAttendance]);
 
-  const todayRosters = useMemo(
-    () => classRosters
+  // Today's roster
+  const todayRosters = useMemo(() => 
+    classRosters
       .filter(item => item.dayOfWeek === currentDayOfWeek)
       .sort((a, b) => a.startTime.localeCompare(b.startTime)),
-    [classRosters, currentDayOfWeek],
+    [classRosters, currentDayOfWeek]
   );
 
   const todayRosterRows = useMemo(() => {
@@ -111,244 +134,475 @@ export default function StudentDashboard() {
     const minimumPeriods = 6;
     const totalRows = Math.max(minimumPeriods, todayRosters.length);
     return Array.from({ length: totalRows }, (_, index) => ({
-      periodLabel: `JP-${index + 1}`,
+      periodLabel: `${index + 1}`,
       roster: todayRosters[index],
     }));
   }, [todayRosters, currentDayOfWeek]);
 
+  // Handlers
+  const handleClosePreview = useCallback(() => {
+    setPreviewImage(null);
+  }, []);
+
+  const handleKeyDownPreview = useCallback((event: React.KeyboardEvent) => {
+    if (event.key === 'Escape' || event.key === 'Enter' || event.key === ' ') {
+      setPreviewImage(null);
+    }
+  }, []);
+
+  if (!student) {
+    return (
+      <div className="flex items-center justify-center h-96">
+        <div className="text-center">
+          <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <User className="w-8 h-8 text-gray-400" />
+          </div>
+          <p className="text-gray-500">Data siswa tidak ditemukan</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="space-y-6">
-      <div className="bg-gradient-to-r from-emerald-500 to-teal-600 rounded-2xl p-6 text-white shadow-lg">
-        <div className="flex items-center gap-4">
-          <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center text-2xl font-bold backdrop-blur-sm">
-              {studentInitial}
+    <div className="space-y-6 max-w-7xl mx-auto pb-8">
+      {/* Header Card - Profil & Ringkasan */}
+      <div className="bg-gradient-to-r from-emerald-500 via-emerald-600 to-teal-600 rounded-2xl p-6 text-white shadow-lg">
+        <div className="flex flex-col md:flex-row md:items-center gap-4 md:gap-6">
+          <div className="w-20 h-20 bg-white/20 rounded-2xl flex items-center justify-center text-3xl font-bold backdrop-blur-sm border border-white/30">
+            {studentInitial}
           </div>
-          <div>
-            <h1 className="text-xl font-bold">{student?.name}</h1>
-            <p className="text-emerald-100">NIS: {student?.nis} • Kelas {className}</p>
+          <div className="flex-1">
+            <h1 className="text-2xl font-bold">{student.name}</h1>
+            <p className="text-emerald-100 mt-1 flex items-center gap-2 flex-wrap">
+              <span className="bg-white/20 px-2 py-0.5 rounded text-sm">NIS: {student.nis}</span>
+              <span>•</span>
+              <span>Kelas {className}</span>
+            </p>
           </div>
         </div>
-        <div className="mt-4 grid grid-cols-3 gap-3">
-          <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3 text-center">
-            <p className="text-2xl font-bold">{stats.percentage}%</p>
-            <p className="text-xs text-emerald-100">Kehadiran</p>
+
+        {/* Stats Grid */}
+        <div className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-3">
+          <div className="bg-white/15 backdrop-blur-sm rounded-xl p-4 text-center border border-white/20">
+            <p className="text-3xl font-bold">{stats.percentage}%</p>
+            <p className="text-sm text-emerald-100 mt-1">Kehadiran</p>
           </div>
-          <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3 text-center">
-            <p className="text-2xl font-bold">{stats.hadir}</p>
-            <p className="text-xs text-emerald-100">Total Hadir</p>
+          <div className="bg-white/15 backdrop-blur-sm rounded-xl p-4 text-center border border-white/20">
+            <p className="text-3xl font-bold text-green-300">{stats.hadir}</p>
+            <p className="text-sm text-emerald-100 mt-1">Hadir</p>
           </div>
-          <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3 text-center">
-            <p className="text-2xl font-bold">{stats.total}</p>
-            <p className="text-xs text-emerald-100">Total Hari</p>
+          <div className="bg-white/15 backdrop-blur-sm rounded-xl p-4 text-center border border-white/20">
+            <p className="text-3xl font-bold">{stats.total}</p>
+            <p className="text-sm text-emerald-100 mt-1">Total Hari</p>
+          </div>
+          <div className="bg-white/15 backdrop-blur-sm rounded-xl p-4 text-center border border-white/20">
+            <p className="text-3xl font-bold text-red-300">{stats.alpha}</p>
+            <p className="text-sm text-emerald-100 mt-1">Alpha</p>
           </div>
         </div>
       </div>
 
+      {/* Attendance Stats Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100 flex items-center gap-3">
-          <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
-            <CheckCircle className="w-5 h-5 text-green-600" />
+        <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100 flex items-center gap-3 hover:shadow-md transition-shadow">
+          <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
+            <CheckCircle className="w-6 h-6 text-green-600" />
           </div>
           <div>
-            <p className="text-xl font-bold text-green-600">{stats.hadir}</p>
-            <p className="text-xs text-gray-500">Hadir</p>
+            <p className="text-2xl font-bold text-gray-800">{stats.hadir}</p>
+            <p className="text-sm text-gray-500">Hadir</p>
           </div>
         </div>
-        <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100 flex items-center gap-3">
-          <div className="w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center">
-            <AlertCircle className="w-5 h-5 text-yellow-600" />
+        <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100 flex items-center gap-3 hover:shadow-md transition-shadow">
+          <div className="w-12 h-12 bg-yellow-100 rounded-xl flex items-center justify-center">
+            <AlertCircle className="w-6 h-6 text-yellow-600" />
           </div>
           <div>
-            <p className="text-xl font-bold text-yellow-600">{stats.izin}</p>
-            <p className="text-xs text-gray-500">Izin</p>
+            <p className="text-2xl font-bold text-gray-800">{stats.izin}</p>
+            <p className="text-sm text-gray-500">Izin</p>
           </div>
         </div>
-        <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100 flex items-center gap-3">
-          <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
-            <Clock className="w-5 h-5 text-orange-600" />
+        <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100 flex items-center gap-3 hover:shadow-md transition-shadow">
+          <div className="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center">
+            <Clock className="w-6 h-6 text-orange-600" />
           </div>
           <div>
-            <p className="text-xl font-bold text-orange-600">{stats.sakit}</p>
-            <p className="text-xs text-gray-500">Sakit</p>
+            <p className="text-2xl font-bold text-gray-800">{stats.sakit}</p>
+            <p className="text-sm text-gray-500">Sakit</p>
           </div>
         </div>
-        <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100 flex items-center gap-3">
-          <div className="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
-            <XCircle className="w-5 h-5 text-red-600" />
+        <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100 flex items-center gap-3 hover:shadow-md transition-shadow">
+          <div className="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center">
+            <XCircle className="w-6 h-6 text-red-600" />
           </div>
           <div>
-            <p className="text-xl font-bold text-red-600">{stats.alpha}</p>
-            <p className="text-xs text-gray-500">Alpha</p>
+            <p className="text-2xl font-bold text-gray-800">{stats.alpha}</p>
+            <p className="text-sm text-gray-500">Alpha</p>
           </div>
         </div>
       </div>
 
-      <div className="grid lg:grid-cols-2 gap-6">
-        <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
-          <div className="flex items-start justify-between gap-3 mb-3">
-            <div>
-              <h2 className="font-semibold text-gray-800">Roster Hari Ini</h2>
-              <p className="text-xs text-gray-500 mt-1">
-                Hari {dayNames[currentDayOfWeek]}. Jadwal akan berganti otomatis pukul 00:00.
-              </p>
+      {/* Main Content - Roster Full Width */}
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+        <div className="p-5 border-b border-gray-100 bg-gray-50/50">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center">
+                <Calendar className="w-5 h-5 text-emerald-600" />
+              </div>
+              <div>
+                <h2 className="font-semibold text-gray-800 text-lg">Jadwal Pelajaran Hari Ini</h2>
+                <p className="text-sm text-gray-500">
+                  {dayNames[currentDayOfWeek]}, {new Date().toLocaleDateString('id-ID', { 
+                    day: 'numeric', 
+                    month: 'long', 
+                    year: 'numeric' 
+                  })}
+                </p>
+              </div>
+            </div>
+            <span className="text-xs text-gray-400 bg-gray-100 px-3 py-1 rounded-full">
+              Auto-refresh pukul 00:00
+            </span>
+          </div>
+        </div>
+
+        <div className="p-5">
+          {currentDayOfWeek === 0 ? (
+            <div className="text-center py-12">
+              <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Calendar className="w-8 h-8 text-gray-400" />
+              </div>
+              <p className="text-gray-500 font-medium">Hari ini hari Minggu</p>
+              <p className="text-sm text-gray-400 mt-1">Tidak ada jadwal pelajaran</p>
+            </div>
+          ) : todayRosters.length === 0 ? (
+            <div className="text-center py-12">
+              <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <BookOpen className="w-8 h-8 text-gray-400" />
+              </div>
+              <p className="text-gray-500 font-medium">Belum ada jadwal untuk hari ini</p>
+              <p className="text-sm text-gray-400 mt-1">Silakan hubungi admin untuk informasi lebih lanjut</p>
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="bg-gray-50">
+                    <th className="text-left text-xs font-semibold text-gray-600 uppercase tracking-wider px-4 py-3 rounded-tl-lg w-20">
+                      JP
+                    </th>
+                    <th className="text-left text-xs font-semibold text-gray-600 uppercase tracking-wider px-4 py-3">
+                      Mata Pelajaran
+                    </th>
+                    <th className="text-left text-xs font-semibold text-gray-600 uppercase tracking-wider px-4 py-3 w-40">
+                      Waktu
+                    </th>
+                    <th className="text-left text-xs font-semibold text-gray-600 uppercase tracking-wider px-4 py-3 w-32">
+                      Ruang
+                    </th>
+                    <th className="text-left text-xs font-semibold text-gray-600 uppercase tracking-wider px-4 py-3 rounded-tr-lg">
+                      Guru Pengajar
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-100">
+                  {todayRosterRows.map((row, index) => (
+                    <tr 
+                      key={`${currentDayOfWeek}-${row.periodLabel}`}
+                      className={!row.roster ? 'bg-gray-50/50' : 'hover:bg-gray-50/80 transition-colors'}
+                    >
+                      <td className="px-4 py-4">
+                        <span className={`inline-flex items-center justify-center w-8 h-8 rounded-lg text-sm font-bold ${
+                          row.roster 
+                            ? 'bg-emerald-100 text-emerald-700' 
+                            : 'bg-gray-200 text-gray-400'
+                        }`}>
+                          {row.periodLabel}
+                        </span>
+                      </td>
+                      <td className="px-4 py-4">
+                        {row.roster ? (
+                          <div>
+                            <p className="font-semibold text-gray-800">{row.roster.subject}</p>
+                            <p className="text-xs text-gray-500 mt-0.5">JP {row.periodLabel}</p>
+                          </div>
+                        ) : (
+                          <span className="text-gray-400 italic">-</span>
+                        )}
+                      </td>
+                      <td className="px-4 py-4">
+                        {row.roster ? (
+                          <div className="flex items-center gap-2 text-sm text-gray-600">
+                            <Clock className="w-4 h-4 text-gray-400" />
+                            <span>{row.roster.startTime} - {row.roster.endTime}</span>
+                          </div>
+                        ) : (
+                          <span className="text-gray-400 italic">-</span>
+                        )}
+                      </td>
+                      <td className="px-4 py-4">
+                        {row.roster ? (
+                          <span className="inline-flex items-center px-2.5 py-1 rounded-md bg-blue-50 text-blue-700 text-sm font-medium">
+                            {row.roster.room}
+                          </span>
+                        ) : (
+                          <span className="text-gray-400 italic">-</span>
+                        )}
+                      </td>
+                      <td className="px-4 py-4">
+                        {row.roster ? (
+                          <div className="flex items-center gap-2">
+                            <div className="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700 text-xs font-bold">
+                              {(row.roster.teacherName || '?').charAt(0).toUpperCase()}
+                            </div>
+                            <span className="text-sm font-medium text-gray-700">
+                              {row.roster.teacherName}
+                            </span>
+                          </div>
+                        ) : (
+                          <span className="text-gray-400 italic">-</span>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Two Column Layout - Announcements & Teachers */}
+      <div className="grid lg:grid-cols-3 gap-6">
+        {/* Class Announcements */}
+        <div className="lg:col-span-1 bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+          <div className="p-5 border-b border-gray-100 bg-gray-50/50">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                <Megaphone className="w-5 h-5 text-blue-600" />
+              </div>
+              <div>
+                <h2 className="font-semibold text-gray-800">Pengumuman Kelas</h2>
+                <p className="text-xs text-gray-500">{classAnnouncements.length} pengumuman</p>
+              </div>
             </div>
           </div>
-          <div className="max-h-[520px] overflow-y-auto pr-1">
-            {currentDayOfWeek === 0 && (
-              <p className="text-sm text-gray-400">Hari ini hari Minggu. Tidak ada jadwal pelajaran.</p>
-            )}
-            {currentDayOfWeek !== 0 && (
-              <div className="overflow-x-auto">
-                <table className="w-full min-w-[640px] border-collapse">
-                  <thead>
-                    <tr>
-                      <th className="text-left text-xs font-semibold text-gray-500 px-3 py-2 border-b border-gray-200 w-24">JP</th>
-                      <th className="text-left text-xs font-semibold text-gray-500 px-3 py-2 border-b border-gray-200">Mata Pelajaran</th>
-                      <th className="text-left text-xs font-semibold text-gray-500 px-3 py-2 border-b border-gray-200 w-44">Jam</th>
-                      <th className="text-left text-xs font-semibold text-gray-500 px-3 py-2 border-b border-gray-200 w-36">Ruang</th>
-                      <th className="text-left text-xs font-semibold text-gray-500 px-3 py-2 border-b border-gray-200 w-56">Guru</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {todayRosterRows.map(row => (
-                      <tr key={`${currentDayOfWeek}-${row.periodLabel}`}>
-                        <td className="px-3 py-3 border-b border-gray-100 text-sm font-medium text-gray-700">
-                          {row.periodLabel}
-                        </td>
-                        <td className="px-3 py-3 border-b border-gray-100 text-sm text-gray-700">
-                          {row.roster?.subject || '-'}
-                        </td>
-                        <td className="px-3 py-3 border-b border-gray-100 text-sm text-gray-600">
-                          {row.roster ? `${row.roster.startTime} - ${row.roster.endTime}` : '-'}
-                        </td>
-                        <td className="px-3 py-3 border-b border-gray-100 text-sm text-gray-600">
-                          {row.roster?.room || '-'}
-                        </td>
-                        <td className="px-3 py-3 border-b border-gray-100 text-sm text-gray-600">
-                          {row.roster?.teacherName || '-'}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+          
+          <div className="p-5 max-h-[400px] overflow-y-auto">
+            {classAnnouncements.length === 0 ? (
+              <div className="text-center py-8">
+                <Megaphone className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+                <p className="text-sm text-gray-500">Belum ada pengumuman</p>
               </div>
-            )}
-            {currentDayOfWeek !== 0 && todayRosters.length === 0 && (
-              <p className="text-sm text-gray-400 mt-3">Belum ada roster untuk hari ini.</p>
+            ) : (
+              <div className="space-y-4">
+                {classAnnouncements.map(item => (
+                  <div 
+                    key={item.id} 
+                    className="border-l-4 border-blue-500 bg-blue-50/30 p-4 rounded-r-lg"
+                  >
+                    <h3 className="font-semibold text-gray-800 text-sm">{item.title}</h3>
+                    <p className="text-xs text-gray-500 mt-1 flex items-center gap-1">
+                      <Clock className="w-3 h-3" />
+                      {new Date(item.createdAt).toLocaleString('id-ID', {
+                        day: 'numeric',
+                        month: 'short',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                      })}
+                    </p>
+                    <p className="text-sm text-gray-700 mt-2 leading-relaxed">{item.message}</p>
+                  </div>
+                ))}
+              </div>
             )}
           </div>
         </div>
 
-        <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
-          <div className="flex items-center gap-2 mb-3">
-            <Megaphone className="w-5 h-5 text-emerald-600" />
-            <h2 className="font-semibold text-gray-800">Pengumuman Kelas</h2>
-          </div>
-          <div className="space-y-3 max-h-[520px] overflow-y-auto pr-1">
-            {classAnnouncements.map(item => (
-              <div key={item.id} className="border-l-4 border-emerald-500 bg-emerald-50/40 px-3 py-2 rounded-r-lg">
-                <p className="text-sm font-semibold text-gray-800">{item.title}</p>
-                <p className="text-xs text-gray-500 mt-0.5">{new Date(item.createdAt).toLocaleString('id-ID')}</p>
-                <p className="text-sm text-gray-700 mt-1">{item.message}</p>
+        {/* Admin Announcements */}
+        <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+          <div className="p-5 border-b border-gray-100 bg-gray-50/50">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                <Megaphone className="w-5 h-5 text-purple-600" />
               </div>
-            ))}
-            {classAnnouncements.length === 0 && <p className="text-sm text-gray-400">Belum ada pengumuman.</p>}
+              <div>
+                <h2 className="font-semibold text-gray-800">Pengumuman Admin Sekolah</h2>
+                <p className="text-xs text-gray-500">Informasi resmi dari pihak sekolah</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="p-5">
+            {pengumumanAdmin.length === 0 ? (
+              <div className="text-center py-8">
+                <Megaphone className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+                <p className="text-sm text-gray-500">Belum ada pengumuman admin</p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {pengumumanAdmin.map((item) => (
+                  <article 
+                    key={item.id} 
+                    className="border border-gray-200 rounded-xl p-4 hover:shadow-md transition-shadow"
+                  >
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="flex-1">
+                        <h3 className="font-semibold text-gray-800">{item.title}</h3>
+                        <p className="text-xs text-gray-500 mt-1 flex items-center gap-1">
+                          <Clock className="w-3 h-3" />
+                          {new Date(item.createdAt).toLocaleString('id-ID')}
+                        </p>
+                      </div>
+                      {item.imageDataUrl && (
+                        <span className="inline-flex items-center gap-1 px-2 py-1 bg-purple-100 text-purple-700 text-xs rounded-md">
+                          <ImageIcon className="w-3 h-3" />
+                          Ada foto
+                        </span>
+                      )}
+                    </div>
+                    
+                    <p className="text-sm text-gray-700 mt-3 leading-relaxed">{item.message}</p>
+                    
+                    {item.imageDataUrl && (
+                      <button
+                        type="button"
+                        onClick={() => setPreviewImage({ 
+                          src: item.imageDataUrl || '', 
+                          title: item.title 
+                        })}
+                        className="mt-3 block w-full sm:w-auto overflow-hidden rounded-lg border border-gray-200 hover:border-purple-300 transition-colors"
+                      >
+                        <img
+                          src={item.imageDataUrl}
+                          alt={item.imageName || item.title}
+                          className="w-full sm:w-48 h-32 object-cover"
+                        />
+                      </button>
+                    )}
+                  </article>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </div>
 
-      <section className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
-        <h2 className="font-semibold text-gray-800">Pengumuman Admin Sekolah</h2>
-        <p className="text-xs text-gray-500 mt-1">Informasi resmi sekolah dari admin. Dapat berupa teks dan foto.</p>
-        <div className="space-y-3 mt-3">
-          {pengumumanAdmin.map((item) => (
-            <article key={item.id} className="border border-gray-200 rounded-lg p-3">
-              <div className="flex items-center justify-between gap-2">
-                <h3 className="text-sm font-semibold text-gray-800">{item.title}</h3>
-                <p className="text-xs text-gray-500">{new Date(item.createdAt).toLocaleString('id-ID')}</p>
-              </div>
-              <p className="text-sm text-gray-700 mt-1">{item.message}</p>
-              {item.imageDataUrl && (
-                <button
-                  type="button"
-                  onClick={() => setPreviewImage({ src: item.imageDataUrl || '', title: item.title })}
-                  className="mt-2 block w-full overflow-hidden rounded-md border border-gray-200 bg-gray-50"
-                >
-                  <img
-                    src={item.imageDataUrl}
-                    alt={item.imageName || item.title}
-                    className="w-full h-auto object-contain"
-                  />
-                </button>
-              )}
-            </article>
-          ))}
-          {pengumumanAdmin.length === 0 && <p className="text-sm text-gray-400">Belum ada pengumuman admin.</p>}
+      {/* Teachers List - Full Width */}
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+        <div className="p-5 border-b border-gray-100 bg-gray-50/50">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center">
+              <User className="w-5 h-5 text-indigo-600" />
+            </div>
+            <div>
+              <h2 className="font-semibold text-gray-800 text-lg">Daftar Guru Sekolah</h2>
+              <p className="text-sm text-gray-500">Total {daftarGuru.length} guru pengajar</p>
+            </div>
+          </div>
         </div>
-      </section>
 
-      <section className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
-        <h2 className="font-semibold text-gray-800">Daftar Guru Sekolah</h2>
-        <p className="text-xs text-gray-500 mt-1">Daftar ini membantu siswa mengenal guru dan mata pelajaran yang diampu.</p>
-        <div className="overflow-x-auto mt-3">
-          <table className="w-full min-w-[560px] text-sm">
-            <thead>
-              <tr>
-                <th className="text-left px-3 py-2 border-b border-gray-200 text-gray-500 font-semibold w-16">No</th>
-                <th className="text-left px-3 py-2 border-b border-gray-200 text-gray-500 font-semibold w-24">Foto</th>
-                <th className="text-left px-3 py-2 border-b border-gray-200 text-gray-500 font-semibold">Nama Guru</th>
-                <th className="text-left px-3 py-2 border-b border-gray-200 text-gray-500 font-semibold">Mata Pelajaran</th>
-                <th className="text-left px-3 py-2 border-b border-gray-200 text-gray-500 font-semibold">Kelas Ajar</th>
-              </tr>
-            </thead>
-            <tbody>
-              {daftarGuru.map((guru, index) => (
-                <tr key={guru.id}>
-                  <td className="px-3 py-2 border-b border-gray-100 text-gray-700">{index + 1}</td>
-                  <td className="px-3 py-2 border-b border-gray-100">
-                    {guru.avatar ? (
-                      <img
-                        src={guru.avatar}
-                        alt={`Foto ${guru.name}`}
-                        className="w-9 h-9 rounded-full object-cover border border-gray-200"
-                      />
-                    ) : (
-                      <div className="w-9 h-9 rounded-full bg-blue-600 text-white text-sm font-semibold flex items-center justify-center">
-                        {(guru.name || '?').charAt(0).toUpperCase()}
-                      </div>
-                    )}
-                  </td>
-                  <td className="px-3 py-2 border-b border-gray-100 text-gray-800 font-medium">{guru.name}</td>
-                  <td className="px-3 py-2 border-b border-gray-100 text-gray-700">{guru.subject}</td>
-                  <td className="px-3 py-2 border-b border-gray-100 text-gray-700">{guru.kelasAjar}</td>
+        <div className="p-5">
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="bg-gray-50">
+                  <th className="text-left text-xs font-semibold text-gray-600 uppercase tracking-wider px-4 py-3 rounded-tl-lg w-16">
+                    No
+                  </th>
+                  <th className="text-left text-xs font-semibold text-gray-600 uppercase tracking-wider px-4 py-3 w-20">
+                    Foto
+                  </th>
+                  <th className="text-left text-xs font-semibold text-gray-600 uppercase tracking-wider px-4 py-3">
+                    Nama Guru
+                  </th>
+                  <th className="text-left text-xs font-semibold text-gray-600 uppercase tracking-wider px-4 py-3 w-48">
+                    Mata Pelajaran
+                  </th>
+                  <th className="text-left text-xs font-semibold text-gray-600 uppercase tracking-wider px-4 py-3 rounded-tr-lg">
+                    Kelas Ajar
+                  </th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-gray-100">
+                {daftarGuru.map((guru, index) => (
+                  <tr key={guru.id} className="hover:bg-gray-50/80 transition-colors">
+                    <td className="px-4 py-4 text-sm text-gray-600 font-medium">
+                      {index + 1}
+                    </td>
+                    <td className="px-4 py-4">
+                      {guru.avatar ? (
+                        <img
+                          src={guru.avatar}
+                          alt={`Foto ${guru.name}`}
+                          className="w-10 h-10 rounded-full object-cover border-2 border-gray-100"
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).src = DEFAULT_AVATAR;
+                          }}
+                        />
+                      ) : (
+                        <div className="w-10 h-10 rounded-full bg-indigo-600 text-white text-sm font-bold flex items-center justify-center">
+                          {(guru.name || '?').charAt(0).toUpperCase()}
+                        </div>
+                      )}
+                    </td>
+                    <td className="px-4 py-4">
+                      <p className="font-semibold text-gray-800">{guru.name}</p>
+                    </td>
+                    <td className="px-4 py-4">
+                      <span className="inline-flex items-center px-2.5 py-1 rounded-md bg-indigo-50 text-indigo-700 text-sm font-medium">
+                        {guru.subject}
+                      </span>
+                    </td>
+                    <td className="px-4 py-4 text-sm text-gray-600">
+                      {guru.kelasAjar}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          
+          {daftarGuru.length === 0 && (
+            <div className="text-center py-8">
+              <User className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+              <p className="text-sm text-gray-500">Belum ada data guru</p>
+            </div>
+          )}
         </div>
-      </section>
+      </div>
 
+      {/* Image Preview Modal */}
       {previewImage && (
         <div
-          className="fixed inset-0 z-50 bg-black/75 p-4"
+          className="fixed inset-0 z-50 bg-black/90 backdrop-blur-sm flex items-center justify-center p-4"
           role="button"
           tabIndex={0}
-          onClick={() => setPreviewImage(null)}
-          onKeyDown={(event) => {
-            if (event.key === 'Escape' || event.key === 'Enter' || event.key === ' ') {
-              setPreviewImage(null);
-            }
-          }}
+          onClick={handleClosePreview}
+          onKeyDown={handleKeyDownPreview}
         >
-          <div className="h-full w-full flex items-center justify-center">
+          <button
+            onClick={handleClosePreview}
+            className="absolute top-4 right-4 w-10 h-10 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center text-white transition-colors"
+          >
+            <X className="w-6 h-6" />
+          </button>
+          
+          <div className="max-w-4xl max-h-[90vh] w-full flex flex-col items-center">
             <img
               src={previewImage.src}
               alt={previewImage.title}
-              className="max-h-[92vh] max-w-[96vw] w-auto h-auto object-contain rounded-md"
+              className="max-h-[80vh] w-auto object-contain rounded-lg shadow-2xl"
             />
+            <p className="text-white mt-4 text-lg font-medium">{previewImage.title}</p>
+            <p className="text-gray-400 text-sm mt-1">Klik dimana saja untuk menutup</p>
           </div>
         </div>
       )}
     </div>
   );
 }
+
+// Constants
+const DEFAULT_AVATAR = '/default-avatar.png';
