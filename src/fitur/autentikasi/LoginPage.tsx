@@ -106,14 +106,14 @@ export default function LoginPage() {
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 {role === 'teacher'
-                  ? 'NIP (Nomor Induk Pegawai) atau User Admin Guru'
-                  : 'NIS (Nomor Induk Siswa) atau User Admin Siswa'}
+                  ? 'NIP / Username'
+                  : 'NIS / Username'}
               </label>
               <input
                 type="text"
                 value={id}
                 onChange={e => setId(e.target.value)}
-                  placeholder={role === 'teacher' ? 'Masukkan NIP atau adm_guru' : 'Masukkan NIS atau adm_siswa'}
+                  placeholder={role === 'teacher' ? 'Masukkan NIP' : 'Masukkan NIS'}
                 className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
                 required
               />
