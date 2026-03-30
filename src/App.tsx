@@ -38,8 +38,6 @@ function AppContent() {
     setVisitedPages(prev => ({ ...prev, [activePage]: true }));
   }, [activePage]);
 
-  if (!user) return <LoginPage />;
-
   const teacherPages: Record<string, ComponentType> = {
     dashboard: DasborGuru,
     attendance: HalamanAbsensi,
@@ -64,13 +62,15 @@ function AppContent() {
     settings: PengaturanAkun,
   };
 
-  const pages = user.role === 'teacher' ? teacherPages : studentPages;
+  const pages = user?.role === 'teacher' ? teacherPages : studentPages;
 
   useEffect(() => {
-    if (!pages[activePage]) {
+    if (user && !pages[activePage]) {
       setActivePage('dashboard');
     }
-  }, [activePage, pages]);
+  }, [activePage, user, pages]);
+
+  if (!user) return <LoginPage />;
 
   return (
     <div className="min-h-screen bg-gray-50">

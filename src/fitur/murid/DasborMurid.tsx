@@ -49,6 +49,7 @@ export default function StudentDashboard() {
   }, []);
 
   const student = useMemo(() => getStudents().find(s => s.id === user?.id), [user, storeVersion]);
+  const studentInitial = (student?.name || '?').charAt(0).toUpperCase();
   const className = useMemo(() => {
     if (!student) return '';
     return getClasses().find(c => c.id === student.classId)?.name || '';
@@ -120,7 +121,7 @@ export default function StudentDashboard() {
       <div className="bg-gradient-to-r from-emerald-500 to-teal-600 rounded-2xl p-6 text-white shadow-lg">
         <div className="flex items-center gap-4">
           <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center text-2xl font-bold backdrop-blur-sm">
-            {student?.name.charAt(0) || '?'}
+              {studentInitial}
           </div>
           <div>
             <h1 className="text-xl font-bold">{student?.name}</h1>
@@ -313,7 +314,7 @@ export default function StudentDashboard() {
                       />
                     ) : (
                       <div className="w-9 h-9 rounded-full bg-blue-600 text-white text-sm font-semibold flex items-center justify-center">
-                        {guru.name.charAt(0)}
+                        {(guru.name || '?').charAt(0).toUpperCase()}
                       </div>
                     )}
                   </td>

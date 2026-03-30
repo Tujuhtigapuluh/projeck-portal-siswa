@@ -45,6 +45,11 @@ function readJsonFromStorage<T>(key: string, fallback: T): T {
   }
 }
 
+function readArrayFromStorage<T>(key: string): T[] {
+  const parsed = readJsonFromStorage<unknown>(key, []);
+  return Array.isArray(parsed) ? (parsed as T[]) : [];
+}
+
 export interface RingkasanPenyimpananBrowser {
   usedBytes: number;
   limitBytes: number;
@@ -286,19 +291,41 @@ export function initializeData() {
 
 // CRUD Operations
 export function getTeachers(): Teacher[] {
-  return readJsonFromStorage<Teacher[]>(STORAGE_KEYS.teachers, []);
+  return readArrayFromStorage<Teacher>(STORAGE_KEYS.teachers).map((item) => ({
+    ...item,
+    id: item.id || `t_${Date.now()}`,
+    name: item.name || 'Guru',
+    nip: item.nip || '',
+    subject: item.subject || '-',
+    password: item.password || '',
+    classIds: Array.isArray(item.classIds) ? item.classIds.filter(Boolean) : [],
+  }));
 }
 
 export function getStudents(): Student[] {
-  return readJsonFromStorage<Student[]>(STORAGE_KEYS.students, []);
+  return readArrayFromStorage<Student>(STORAGE_KEYS.students).map((item) => ({
+    ...item,
+    id: item.id || `s_${Date.now()}`,
+    name: item.name || 'Siswa',
+    nis: item.nis || '',
+    classId: item.classId || '',
+    gender: item.gender === 'P' ? 'P' : 'L',
+    password: item.password || '',
+  }));
 }
 
 export function getClasses(): ClassRoom[] {
-  return readJsonFromStorage<ClassRoom[]>(STORAGE_KEYS.classes, []);
+  return readArrayFromStorage<ClassRoom>(STORAGE_KEYS.classes).map((item) => ({
+    ...item,
+    id: item.id || `c_${Date.now()}`,
+    name: item.name || '-',
+    grade: item.grade || '-',
+    teacherId: item.teacherId || '',
+  }));
 }
 
 export function getAttendance(): AttendanceRecord[] {
-  return readJsonFromStorage<AttendanceRecord[]>(STORAGE_KEYS.attendance, []);
+  return readArrayFromStorage<AttendanceRecord>(STORAGE_KEYS.attendance);
 }
 
 export function saveTeachers(teachers: Teacher[]) {
@@ -427,7 +454,7 @@ export function upsertAssignmentSubmission(item: AssignmentSubmission) {
 }
 
 export function getClassRosters(classId: string): ClassRosterItem[] {
-  const rosters = readJsonFromStorage<ClassRosterItem[]>(STORAGE_KEYS.rosters, []);
+  const rosters = readArrayFromStorage<ClassRosterItem>(STORAGE_KEYS.rosters);
   return rosters
     .filter(r => r.classId === classId)
     .sort((a, b) => (a.dayOfWeek - b.dayOfWeek) || a.startTime.localeCompare(b.startTime));
@@ -448,7 +475,7 @@ export function deleteClassRoster(id: string) {
 }
 
 export function getClassAnnouncements(classId: string): ClassAnnouncement[] {
-  const announcements = readJsonFromStorage<ClassAnnouncement[]>(STORAGE_KEYS.announcements, []);
+  const announcements = readArrayFromStorage<ClassAnnouncement>(STORAGE_KEYS.announcements);
   return announcements
     .filter(item => item.classId === classId)
     .sort((a, b) => b.createdAt - a.createdAt);
@@ -478,7 +505,7 @@ export function subscribeStore(listener: () => void) {
 }
 
 export function getSuratIzin(): SuratIzin[] {
-  const letters = readJsonFromStorage<SuratIzin[]>(STORAGE_KEYS.letters, []);
+  const letters = readArrayFromStorage<SuratIzin>(STORAGE_KEYS.letters);
   // Backward compatibility for older data that did not store status yet.
   return letters
     .map(item => ({
@@ -507,14 +534,14 @@ export function updateStatusSuratIzin(id: string, status: SuratIzin['status']) {
 }
 
 export function getTagihanSekolahBySiswa(studentId: string, year: number): TagihanSekolah[] {
-  const bills = readJsonFromStorage<TagihanSekolah[]>(STORAGE_KEYS.bills, []);
+  const bills = readArrayFromStorage<TagihanSekolah>(STORAGE_KEYS.bills);
   return bills
     .filter(item => item.studentId === studentId && item.year === year)
     .sort((a, b) => a.month - b.month);
 }
 
 export function getTahunTagihanSiswa(studentId: string): number[] {
-  const bills = readJsonFromStorage<TagihanSekolah[]>(STORAGE_KEYS.bills, []);
+  const bills = readArrayFromStorage<TagihanSekolah>(STORAGE_KEYS.bills);
   const years = new Set(
     bills
       .filter(item => item.studentId === studentId)
@@ -527,7 +554,7 @@ export function bayarTagihanSekolah(
   id: string,
   paymentMethod: TagihanSekolah['paymentMethod'],
 ) {
-  const bills = readJsonFromStorage<TagihanSekolah[]>(STORAGE_KEYS.bills, []);
+  const bills = readArrayFromStorage<TagihanSekolah>(STORAGE_KEYS.bills);
   const updated = bills.map(item => (
     item.id === id
       ? {
@@ -606,19 +633,17 @@ export function terapkanTagihanTahunanUntukSemuaSiswa(
 }
 
 export function getPengumumanAdmin(): PengumumanAdmin[] {
-  let announcements: PengumumanAdmin[] = [];
-  try {
-    const data = localStorage.getItem(STORAGE_KEYS.adminAnnouncements);
-    announcements = data ? JSON.parse(data) : [];
-  } catch {
-    announcements = [];
-    localStorage.removeItem(STORAGE_KEYS.adminAnnouncements);
-  }
+  const announcements = readArrayFromStorage<PengumumanAdmin>(STORAGE_KEYS.adminAnnouncements);
   return announcements
     .map((item) => ({
       ...item,
+      id: item.id || `ann_${Date.now()}`,
+      title: item.title || 'Pengumuman',
+      message: item.message || '',
       targetScope: item.targetScope || 'all',
-      targetClassIds: item.targetClassIds || [],
+      targetClassIds: Array.isArray(item.targetClassIds) ? item.targetClassIds.filter(Boolean) : [],
+      createdAt: typeof item.createdAt === 'number' ? item.createdAt : Date.now(),
+      createdBy: item.createdBy || 'admin',
     }))
     .sort((a, b) => b.createdAt - a.createdAt);
 }

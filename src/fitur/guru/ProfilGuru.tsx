@@ -121,7 +121,7 @@ export default function ProfilGuru() {
                 />
               ) : (
                 <div className="w-28 h-28 md:w-32 md:h-32 rounded-full bg-blue-700 text-white flex items-center justify-center text-4xl font-bold border-4 border-white shadow-sm">
-                  {teacher.name.charAt(0)}
+                  {(teacher.name || '?').charAt(0).toUpperCase()}
                 </div>
               )}
               <div className="pb-1">

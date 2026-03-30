@@ -178,7 +178,7 @@ export default function AttendancePage() {
                             />
                           ) : (
                             <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold ${student.gender === 'L' ? 'bg-blue-500' : 'bg-pink-500'}`}>
-                              {student.name.charAt(0)}
+                              {(student.name || '?').charAt(0).toUpperCase()}
                             </div>
                           )}
                           <div>

@@ -26,6 +26,7 @@ interface SidebarProps {
 export default function Sidebar({ activePage, onNavigate }: SidebarProps) {
   const { user, logout } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const avatarInitial = (user?.name || '?').charAt(0).toUpperCase();
 
   const isTeacher = user?.role === 'teacher';
 
@@ -83,7 +84,7 @@ export default function Sidebar({ activePage, onNavigate }: SidebarProps) {
             />
           ) : (
             <div className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm ${isTeacher ? 'bg-blue-600' : 'bg-emerald-600'}`}>
-              {user?.name.charAt(0)}
+              {avatarInitial}
             </div>
           )}
           <div className="flex-1 min-w-0 text-left">

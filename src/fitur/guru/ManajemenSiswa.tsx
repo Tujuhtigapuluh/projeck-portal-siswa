@@ -180,7 +180,7 @@ export default function StudentManagement() {
                         />
                       ) : (
                         <div className={`w-9 h-9 rounded-full flex items-center justify-center text-white text-sm font-bold ${student.gender === 'L' ? 'bg-blue-500' : 'bg-pink-500'}`}>
-                          {student.name.charAt(0)}
+                          {(student.name || '?').charAt(0).toUpperCase()}
                         </div>
                       )}
                       <span className="font-medium text-gray-800">{student.name}</span>

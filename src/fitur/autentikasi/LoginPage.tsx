@@ -54,14 +54,23 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 flex items-center justify-center p-4">
+    <div
+      className="relative min-h-screen flex items-center justify-center p-4"
+      style={{
+        backgroundImage:
+          "linear-gradient(rgba(15, 23, 42, 0.68), rgba(30, 58, 138, 0.62)), url('https://media.istockphoto.com/id/1500673669/pt/foto/kids-back-to-school-group-of-children.jpg?s=170667a&w=0&k=20&c=z2k56SPgdTSlIj12MrqNC0nuK9q_D5fuq_9b6J0SRnQ=')",
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+      }}
+    >
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-20 h-20 bg-white rounded-2xl shadow-xl mb-4">
             <GraduationCap className="w-10 h-10 text-blue-600" />
           </div>
-          <h1 className="text-3xl font-bold text-white">Sistem Absensi</h1>
+          <h1 className="text-3xl font-bold text-white">Portal Absensi</h1>
           <p className="text-blue-200 mt-1">SMA Negeri 1 Nusantara</p>
         </div>
 
