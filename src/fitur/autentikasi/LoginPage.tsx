@@ -74,7 +74,7 @@ export default function LoginPage() {
       className="relative min-h-screen flex items-center justify-center p-4"
       style={{
         backgroundImage:
-          "linear-gradient(rgba(15, 23, 42, 0.3), rgba(30, 58, 138, 0.3)), url('https://blog.klikindomaret.com/wp-content/uploads/2022/07/daughter-with-school-uniform-highfive-with-mother-during-online-class-home-scaled.jpg')",
+          "linear-gradient(rgba(15, 23, 42, 0.3), rgba(30, 58, 138, 0.3)), url('https://www.fakta.id/media/uploads/7/36d239d4b6cbd09261bbd0e12f5dac2a.jpg')",
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
