@@ -20,6 +20,7 @@ export interface Teacher {
   password: string;
   classIds: string[];
   avatar?: string;
+  whatsapp?: string;
   phone?: string;
   email?: string;
   address?: string;
