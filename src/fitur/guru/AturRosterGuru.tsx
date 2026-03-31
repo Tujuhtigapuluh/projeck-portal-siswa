@@ -67,10 +67,11 @@ export default function AturRosterGuru() {
   };
 
   return (
-    <div className="space-y-6">
-      <div>
+    <div className="space-y-5">
+      <div className="bg-white rounded-xl p-5 border border-gray-100 shadow-sm">
         <h1 className="text-2xl font-bold text-gray-800">Atur Roster</h1>
-        <p className="text-gray-500">Kelola jadwal pelajaran per kelas dari Senin sampai Sabtu.</p>
+		<p className="text-sm text-gray-500 mt-1">
+        Kelola jadwal pelajaran per kelas dari Senin sampai Sabtu.</p>
       </div>
 
       <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 space-y-4">

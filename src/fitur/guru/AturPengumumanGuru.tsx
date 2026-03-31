@@ -48,10 +48,11 @@ export default function AturPengumumanGuru() {
   };
 
   return (
-    <div className="space-y-6">
-      <div>
+    <div className="space-y-5">
+      <div className="bg-white rounded-xl p-5 border border-gray-100 shadow-sm">
         <h1 className="text-2xl font-bold text-gray-800">Atur Pengumuman</h1>
-        <p className="text-gray-500">Buat pengumuman kelas agar langsung terlihat oleh seluruh siswa kelas terkait.</p>
+		<p className="text-sm text-gray-500 mt-1">
+        Buat pengumuman kelas agar langsung terlihat oleh seluruh siswa kelas terkait.</p>
       </div>
 
       <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 space-y-4">

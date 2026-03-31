@@ -99,10 +99,11 @@ export default function ReportPage() {
   };
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-gray-800">📊 Laporan Absensi</h1>
-        <p className="text-gray-500">Rekap kehadiran siswa per kelas</p>
+    <div className="space-y-5">
+      <div className="bg-white rounded-xl p-5 border border-gray-100 shadow-sm">
+        <h1 className="text-2xl font-bold text-gray-800">Laporan Absensi</h1>
+		<p className="text-sm text-gray-500 mt-1">
+        Rekap kehadiran siswa per kelas</p>
       </div>
 
       {/* Filters */}
@@ -144,7 +145,6 @@ export default function ReportPage() {
 
       {!selectedClass ? (
         <div className="bg-white rounded-xl p-12 shadow-sm border border-gray-100 text-center">
-          <div className="text-6xl mb-4">📊</div>
           <p className="text-gray-500 text-lg">Pilih kelas untuk melihat laporan</p>
         </div>
       ) : (

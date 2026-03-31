@@ -25,7 +25,6 @@ export default function StudentManagement() {
 
   const students = useMemo(() => {
     if (!selectedClass) {
-      // Show all students from teacher's classes
       const allStudents: Student[] = [];
       classes.forEach(c => {
         allStudents.push(...getStudentsByClass(c.id));
@@ -33,7 +32,6 @@ export default function StudentManagement() {
       return allStudents.sort((a, b) => a.name.localeCompare(b.name));
     }
     return getStudentsByClass(selectedClass).sort((a, b) => a.name.localeCompare(b.name));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedClass, classes, refresh]);
 
   const filteredStudents = useMemo(() => {
@@ -99,20 +97,22 @@ export default function StudentManagement() {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-800">Data Siswa</h1>
-          <p className="text-gray-500">Kelola data siswa per kelas</p>
-        </div>
-        <button
-          onClick={openAddModal}
-          className="px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 flex items-center gap-2 font-medium shadow-lg"
-        >
-          <UserPlus className="w-4 h-4" />
-          Tambah Siswa
-        </button>
+    <div className="space-y-5">
+      {/* Header */}
+      <div className="bg-white rounded-xl p-5 border border-gray-100 shadow-sm">
+        <h1 className="text-2xl font-bold text-gray-800">Data Siswa</h1>
+        <p className="text-sm text-gray-500 mt-1">
+          Kelola data siswa per kelas
+        </p>
       </div>
+      
+      <button
+        onClick={openAddModal}
+        className="px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 flex items-center gap-2 font-medium shadow-lg"
+      >
+        <UserPlus className="w-4 h-4" />
+        Tambah Siswa
+      </button>
 
       {/* Filters */}
       <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100 flex flex-wrap gap-4">

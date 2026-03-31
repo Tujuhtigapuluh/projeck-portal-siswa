@@ -88,10 +88,11 @@ export default function AttendancePage() {
   };
 
   return (
-    <div className="space-y-6">
-      <div>
+    <div className="space-y-5">
+      <div className="bg-white rounded-xl p-5 border border-gray-100 shadow-sm">
         <h1 className="text-2xl font-bold text-gray-800">Input Absensi</h1>
-        <p className="text-gray-500">Catat kehadiran siswa per kelas</p>
+		<p className="text-sm text-gray-500 mt-1">
+        Catat kehadiran siswa per kelas</p>
       </div>
 
       {/* Filters */}
@@ -132,7 +133,6 @@ export default function AttendancePage() {
 
       {!selectedClass ? (
         <div className="bg-white rounded-xl p-12 shadow-sm border border-gray-100 text-center">
-          <div className="text-6xl mb-4">[ ]</div>
           <p className="text-gray-500 text-lg">Pilih kelas untuk mulai mengisi absensi</p>
         </div>
       ) : (

@@ -97,10 +97,11 @@ export default function HistoryPage() {
   };
 
   return (
-    <div className="space-y-6">
-      <div>
+    <div className="space-y-5">
+      <div className="bg-white rounded-xl p-5 border border-gray-100 shadow-sm">
         <h1 className="text-2xl font-bold text-gray-800">Riwayat Absensi</h1>
-        <p className="text-gray-500">Klik tanggal pada kalender untuk melihat catatan absensi harian.</p>
+		 <p className="text-sm text-gray-500 mt-1">
+        Klik tanggal pada kalender untuk melihat catatan absensi harian.</p>
       </div>
 
       <div className="grid lg:grid-cols-[1fr_360px] gap-6">

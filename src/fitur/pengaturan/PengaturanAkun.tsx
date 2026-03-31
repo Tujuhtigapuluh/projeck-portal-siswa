@@ -113,8 +113,8 @@ export default function PengaturanAkun() {
   };
 
   return (
-    <div className="max-w-3xl space-y-5">
-      <div>
+    <div className="space-y-5">
+      <div className="bg-white rounded-xl p-5 border border-gray-100 shadow-sm">
         <h1 className="text-2xl font-bold text-gray-800">Pengaturan Akun</h1>
         <p className="text-sm text-gray-500 mt-1">
           Ubah {user.role === 'teacher' ? 'NIP' : 'NIS'} dan kata sandi akun Anda.

@@ -91,10 +91,11 @@ export default function TaskPouchPage() {
   };
 
   return (
-    <div className="space-y-6">
-      <div>
+     <div className="space-y-5">
+      <div className="bg-white rounded-xl p-5 border border-gray-100 shadow-sm">
         <h1 className="text-2xl font-bold text-gray-800">Kantong Tugas</h1>
-        <p className="text-gray-500">Kelas {classRoom?.name || '-'} - Kumpulkan jawaban tugas online dari guru.</p>
+		<p className="text-sm text-gray-500 mt-1">
+        Kelas {classRoom?.name || '-'} - Kumpulkan jawaban tugas online dari guru.</p>
       </div>
 
       <div className="grid lg:grid-cols-2 gap-6">

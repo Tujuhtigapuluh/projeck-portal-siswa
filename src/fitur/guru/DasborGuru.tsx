@@ -78,10 +78,11 @@ export default function DasborGuru() {
   }, [user, storeVersion]);
 
   return (
-    <div className="space-y-6">
-      <div>
+    <div className="space-y-5">
+      <div className="bg-white rounded-xl p-5 border border-gray-100 shadow-sm">
         <h1 className="text-2xl font-bold text-gray-800">Dashboard Guru</h1>
-        <p className="text-gray-500">Selamat datang, {user?.name}</p>
+		<p className="text-sm text-gray-500 mt-1">
+        Selamat datang, {user?.name}</p>
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
