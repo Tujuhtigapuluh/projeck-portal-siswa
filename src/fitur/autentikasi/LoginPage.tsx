@@ -70,62 +70,54 @@ export default function LoginPage() {
   };
 
   return (
-    <div
-      className="relative min-h-screen flex items-center justify-center p-4"
-      style={{
-        backgroundImage:
-          "linear-gradient(rgba(15, 23, 42, 0.3), rgba(30, 58, 138, 0.3)), url('https://www.fakta.id/media/uploads/7/36d239d4b6cbd09261bbd0e12f5dac2a.jpg')",
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
-      }}
-    >
-      <div className="w-full max-w-md">
-        {/* Logo */}
-        <div className="text-center mb-4">
-          <div className="inline-flex items-center justify-center w-32 h-32 mb-2">
-            <img 
-              src="https://3.bp.blogspot.com/-ZjI34XOI__8/WuqXymwhbaI/AAAAAAAAAnk/dFmja9cDA4QIdkWahzFiKQwcPLBoM7GuwCLcBGAs/s1600/Logo%2BSMP%2B1%2Bmajenang.png" 
+    <div className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden p-4">
+      <img
+        src="https://asset-2.tstatic.net/trends/foto/bank/images/SISWA-SMP-BAHAGIA.jpg"
+        alt="Siswa SMP Bahagia"
+        className="absolute inset-0 h-full w-full object-cover"
+      />
+      <div className="absolute inset-0 bg-slate-900/45" />
+
+      <div className="relative z-10 w-full max-w-5xl">
+        <div className="text-center mb-6">
+          <div className={`inline-flex items-center justify-center mb-3 ${role === null ? 'h-48 w-48' : 'h-20 w-20'}`}>
+            <img
+              src="https://3.bp.blogspot.com/-ZjI34XOI__8/WuqXymwhbaI/AAAAAAAAAnk/dFmja9cDA4QIdkWahzFiKQwcPLBoM7GuwCLcBGAs/s1600/Logo%2BSMP%2B1%2Bmajenang.png"
               alt="Logo SMP 1 Majenang"
-              className="w-28 h-28 object-contain drop-shadow-2xl"
+              className={`object-contain drop-shadow-2xl ${role === null ? 'h-44 w-44' : 'h-16 w-16'}`}
             />
           </div>
-          <h1 className="text-3xl font-bold text-white drop-shadow-lg">Portal Absensi</h1>
+          <h1 className="text-3xl font-bold text-white drop-shadow-lg mb-1">Portal Absensi</h1>
+          <p className="text-white/90 text-sm drop-shadow-md">SMP 1 Majenang</p>
         </div>
 
-        {/* Divider tipis */}
-        <div className="border-t border-blue-300 opacity-50 w-2/3 mx-auto mb-4"></div>
+        <div className="border-t border-blue-300/60 w-2/3 mx-auto mb-6" />
 
-        {/* Card - Tanpa background */}
         <div className="rounded-2xl p-6">
-          {/* STEP 1: Pilihan Peran */}
           {role === null && (
             <div className="space-y-4">
-              <div className="flex gap-3 justify-center">
-  {/* Tombol Guru */}
-  <button
-    onClick={() => handleSelectRole('teacher')}
-    className="flex items-center justify-center gap-2 px-4 py-2 w-40 rounded-lg bg-blue-600 hover:bg-blue-700 text-white shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300"
-  >
-    <BookOpen className="w-5 h-5" />
-    <span className="font-semibold text-sm text-center">Guru</span>
-  </button>
+              <div className="flex flex-col items-center justify-center gap-5 md:flex-row md:gap-7">
+                <button
+                  onClick={() => handleSelectRole('teacher')}
+                  className="flex items-center justify-center gap-2 px-4 py-3 w-40 rounded-lg bg-blue-600 hover:bg-blue-700 text-white shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300"
+                >
+                  <BookOpen className="w-5 h-5" />
+                  <span className="font-semibold text-sm text-center">Guru</span>
+                </button>
 
-  {/* Tombol Siswa */}
-  <button
-    onClick={() => handleSelectRole('student')}
-    className="flex items-center justify-center gap-2 px-4 py-2 w-40 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300"
-  >
-    <GraduationCap className="w-5 h-5" />
-    <span className="font-semibold text-sm text-center">Siswa</span>
-  </button>
-</div>
+                <button
+                  onClick={() => handleSelectRole('student')}
+                  className="flex items-center justify-center gap-2 px-4 py-3 w-40 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300"
+                >
+                  <GraduationCap className="w-5 h-5" />
+                  <span className="font-semibold text-sm text-center">Siswa</span>
+                </button>
+              </div>
             </div>
           )}
 
-          {/* STEP 2: Form Login */}
           {role !== null && (
-            <div className="animate-in fade-in slide-in-from-right-4 duration-300">
+            <div className="mx-auto max-w-md animate-in fade-in slide-in-from-right-4 duration-300">
               <div className="flex items-center gap-3 mb-4">
                 <button
                   onClick={handleBack}
@@ -150,8 +142,8 @@ export default function LoginPage() {
                     type="text"
                     value={id}
                     onChange={e => setId(e.target.value)}
-                    placeholder={role === 'teacher' ? 'Masukkan NIP' : 'Masukkan NIS'}
-                    className="w-full px-4 py-2.5 bg-white/90 backdrop-blur-sm border border-white/30 rounded-xl focus:ring-2 focus:ring-blue-400 focus:border-transparent outline-none transition text-gray-800 placeholder-gray-500"
+                    placeholder={role === 'teacher' ? 'Masukkan NIP atau adm_guru' : 'Masukkan NIS atau adm_siswa'}
+                    className="w-full px-4 py-2.5 bg-white/90 border border-white/30 rounded-xl focus:ring-2 focus:ring-blue-400 focus:border-transparent outline-none transition text-gray-800 placeholder-gray-500"
                     required
                     autoFocus
                   />
@@ -165,7 +157,7 @@ export default function LoginPage() {
                       value={password}
                       onChange={e => setPassword(e.target.value)}
                       placeholder="Masukkan kata sandi..."
-                      className="w-full px-4 py-2.5 bg-white/90 backdrop-blur-sm border border-white/30 rounded-xl focus:ring-2 focus:ring-blue-400 focus:border-transparent outline-none transition pr-12 text-gray-800 placeholder-gray-500"
+                      className="w-full px-4 py-2.5 bg-white/90 border border-white/30 rounded-xl focus:ring-2 focus:ring-blue-400 focus:border-transparent outline-none transition pr-12 text-gray-800 placeholder-gray-500"
                       required
                     />
                     <button
@@ -179,7 +171,7 @@ export default function LoginPage() {
                 </div>
 
                 {error && (
-                  <div className="bg-red-500/80 backdrop-blur-sm text-white text-sm px-4 py-2.5 rounded-xl border border-red-400/50">
+                  <div className="bg-red-500/80 text-white text-sm px-4 py-2.5 rounded-xl border border-red-400/50">
                     {error}
                   </div>
                 )}
@@ -188,8 +180,8 @@ export default function LoginPage() {
                   type="submit"
                   className={`w-full py-2.5 rounded-xl text-white font-semibold flex items-center justify-center gap-2 transition-all shadow-lg hover:shadow-xl border border-white/30 ${
                     role === 'teacher'
-                      ? 'bg-blue-600/80 hover:bg-blue-700/90 backdrop-blur-sm'
-                      : 'bg-emerald-600/80 hover:bg-emerald-700/90 backdrop-blur-sm'
+                      ? 'bg-blue-600/85 hover:bg-blue-700/90'
+                      : 'bg-emerald-600/85 hover:bg-emerald-700/90'
                   }`}
                 >
                   <LogIn className="w-5 h-5" />
@@ -197,14 +189,13 @@ export default function LoginPage() {
                 </button>
               </form>
 
-              {/* Demo Info */}
-              <div className="mt-4 p-3 bg-amber-500/20 backdrop-blur-sm rounded-xl border border-amber-400/30">
-                <p className="text-xs font-semibold text-amber-200 mb-1">Demo Akun:</p>
-                <div className="text-xs text-amber-100/90 space-y-0.5">
-                  <p><strong>Guru:</strong> NIP: 198501012010011001 | Pass: guru123</p>
-                  <p><strong>Siswa:</strong> NIS: 2024001 | Pass: siswa123</p>
-                  <p><strong>Admin Guru:</strong> adm_guru | Pass: admin123</p>
-                  <p><strong>Admin Siswa:</strong> adm_siswa | Pass: admin123</p>
+              <div className="mt-4 p-3 bg-amber-500/20 rounded-xl border border-amber-400/30">
+                <p className="text-xs font-semibold text-amber-100 mb-1">Demo Akun:</p>
+                <div className="text-xs text-amber-50 space-y-0.5">
+                  <p><strong>Guru:</strong> NIP: 198501012010011001 | Kata Sandi: guru123</p>
+                  <p><strong>Siswa:</strong> NIS: 2024001 | Kata Sandi: siswa123</p>
+                  <p><strong>Admin Guru:</strong> Pengguna: adm_guru | Kata Sandi: admin123</p>
+                  <p><strong>Admin Siswa:</strong> Pengguna: adm_siswa | Kata Sandi: admin123</p>
                 </div>
               </div>
             </div>
