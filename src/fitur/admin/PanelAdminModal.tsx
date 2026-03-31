@@ -999,79 +999,86 @@ export default function PanelAdminModal({ open, onClose, scope, preAuthorized = 
                   </div>
                 )}
 
-                {activeTeacherTab === 'tambah-guru' && (
-                  <div className="min-h-[420px] space-y-4 rounded-xl border border-gray-200 p-4">
-                    <div className="mx-auto grid w-full max-w-4xl gap-4 lg:grid-cols-[1.1fr_1fr]">
-                      <div className="space-y-3 rounded-lg border border-gray-200 bg-gray-50/60 p-4">
-                        <h3 className="text-sm font-semibold text-gray-800">Form Tambah Guru</h3>
-                        <div className="grid gap-2 sm:grid-cols-2">
-                          <div className="space-y-1">
-                            <label className="text-xs text-gray-600">Nama Guru</label>
-                            <input
-                              value={newTeacherName}
-                              onChange={(e) => setNewTeacherName(e.target.value)}
-                              placeholder="Contoh: Budi Santoso"
-                              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
-                            />
-                          </div>
-                          <div className="space-y-1">
-                            <label className="text-xs text-gray-600">NIP</label>
-                            <input
-                              value={newTeacherNip}
-                              onChange={(e) => setNewTeacherNip(e.target.value)}
-                              placeholder="Masukkan NIP"
-                              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
-                            />
-                          </div>
-                          <div className="space-y-1">
-                            <label className="text-xs text-gray-600">Kata Sandi</label>
-                            <input
-                              value={newTeacherPassword}
-                              onChange={(e) => setNewTeacherPassword(e.target.value)}
-                              placeholder="Minimal 8 karakter"
-                              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
-                            />
-                          </div>
-                          <div className="space-y-1">
-                            <label className="text-xs text-gray-600">Mata Pelajaran</label>
-                            <input
-                              value={newTeacherSubject}
-                              onChange={(e) => setNewTeacherSubject(e.target.value)}
-                              placeholder="Contoh: Bahasa Indonesia"
-                              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
-                            />
-                          </div>
-                        </div>
-                      </div>
+{activeTeacherTab === 'tambah-guru' && (
+  <div className="min-h-screen space-y-4 rounded-xl border border-gray-200 p-6 bg-white">
+    <div className="mx-auto grid w-full gap-6 lg:grid-cols-[1.1fr_1fr]">
+      {/* Form Tambah Guru */}
+      <div className="space-y-3 rounded-lg border border-gray-200 bg-gray-50/60 p-6">
+        <h3 className="text-base font-semibold text-gray-800">Form Tambah Guru</h3>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <div className="space-y-1">
+            <label className="text-xs text-gray-600">Nama Guru</label>
+            <input
+              value={newTeacherName}
+              onChange={(e) => setNewTeacherName(e.target.value)}
+              placeholder="Contoh: Budi Santoso"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+            />
+          </div>
+          <div className="space-y-1">
+            <label className="text-xs text-gray-600">NIP</label>
+            <input
+              value={newTeacherNip}
+              onChange={(e) => setNewTeacherNip(e.target.value)}
+              placeholder="Masukkan NIP"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+            />
+          </div>
+          <div className="space-y-1">
+            <label className="text-xs text-gray-600">Kata Sandi</label>
+            <input
+              value={newTeacherPassword}
+              onChange={(e) => setNewTeacherPassword(e.target.value)}
+              placeholder="Minimal 8 karakter"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+            />
+          </div>
+          <div className="space-y-1">
+            <label className="text-xs text-gray-600">Mata Pelajaran</label>
+            <input
+              value={newTeacherSubject}
+              onChange={(e) => setNewTeacherSubject(e.target.value)}
+              placeholder="Contoh: Bahasa Indonesia"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+            />
+          </div>
+        </div>
+      </div>
 
-                      <div className="space-y-2 rounded-lg border border-gray-200 bg-white p-4">
-                        <p className="text-xs font-medium text-gray-700">Pilih Kelas yang Diajar</p>
-                        <div className="max-h-56 space-y-1 overflow-y-auto rounded-lg border border-gray-200 p-2">
-                          {classes.map((item) => (
-                            <label
-                              key={item.id}
-                              className="flex items-center justify-between rounded-md px-2 py-1.5 text-sm text-gray-700 hover:bg-gray-50"
-                            >
-                              <span>{classEdits[item.id]?.name || item.name}</span>
-                              <input
-                                type="checkbox"
-                                checked={newTeacherClassIds.includes(item.id)}
-                                onChange={() => toggleNewTeacherClass(item.id)}
-                              />
-                            </label>
-                          ))}
-                        </div>
-                        <p className="text-xs text-gray-500">Dipilih: {newTeacherClassIds.length} kelas</p>
-                      </div>
-                    </div>
+      {/* Pilih Kelas */}
+      <div className="space-y-2 rounded-lg border border-gray-200 bg-white p-6">
+        <p className="text-sm font-medium text-gray-700">Pilih Kelas yang Diajar</p>
+        <div className="max-h-[60vh] space-y-1 overflow-y-auto rounded-lg border border-gray-200 p-2">
+          {classes.map((item) => (
+            <label
+              key={item.id}
+              className="flex items-center justify-between rounded-md px-2 py-1.5 text-sm text-gray-700 hover:bg-gray-50"
+            >
+              <span>{classEdits[item.id]?.name || item.name}</span>
+              <input
+                type="checkbox"
+                checked={newTeacherClassIds.includes(item.id)}
+                onChange={() => toggleNewTeacherClass(item.id)}
+              />
+            </label>
+          ))}
+        </div>
+        <p className="text-xs text-gray-500">Dipilih: {newTeacherClassIds.length} kelas</p>
+      </div>
+    </div>
 
-                    <div className="mx-auto flex w-full max-w-4xl justify-end">
-                      <button onClick={handleAddTeacher} className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm">
-                        <UserPlus className="w-4 h-4" /> Tambah Guru
-                      </button>
-                    </div>
-                  </div>
-                )}
+    {/* Tombol Tambah Guru */}
+    <div className="mx-auto flex w-full justify-end">
+      <button
+        onClick={handleAddTeacher}
+        className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700 transition"
+      >
+        <UserPlus className="w-4 h-4" /> Tambah Guru
+      </button>
+    </div>
+  </div>
+)}
+
 
                 {activeTeacherTab === 'akun-guru' && (
                   <div className="grid min-h-[540px] gap-4 rounded-xl border border-gray-200 p-4 lg:grid-cols-[280px_1fr]">

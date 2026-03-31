@@ -82,51 +82,54 @@ export default function LoginPage() {
     >
       <div className="w-full max-w-md">
         {/* Logo */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-20 h-20 bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl mb-4">
-            <GraduationCap className="w-10 h-10 text-blue-600" />
+        <div className="text-center mb-4">
+          <div className="inline-flex items-center justify-center w-32 h-32 mb-2">
+            <img 
+              src="https://3.bp.blogspot.com/-ZjI34XOI__8/WuqXymwhbaI/AAAAAAAAAnk/dFmja9cDA4QIdkWahzFiKQwcPLBoM7GuwCLcBGAs/s1600/Logo%2BSMP%2B1%2Bmajenang.png" 
+              alt="Logo SMP 1 Majenang"
+              className="w-28 h-28 object-contain drop-shadow-2xl"
+            />
           </div>
           <h1 className="text-3xl font-bold text-white drop-shadow-lg">Portal Absensi</h1>
-          <p className="text-blue-100 mt-1 drop-shadow-md">SMA Negeri 1 Nusantara</p>
         </div>
 
-        {/* Card - Glassmorphism tanpa background putih solid */}
-        <div className="bg-white/10 backdrop-blur-md rounded-2xl shadow-2xl p-6 border border-white/20">
+        {/* Divider tipis */}
+        <div className="border-t border-blue-300 opacity-50 w-2/3 mx-auto mb-4"></div>
 
-          {/* STEP 1: Pilihan Peran - Tombol Kecil Horizontal */}
+        {/* Card - Tanpa background */}
+        <div className="rounded-2xl p-6">
+          {/* STEP 1: Pilihan Peran */}
           {role === null && (
             <div className="space-y-4">
               <h2 className="text-lg font-semibold text-center text-white drop-shadow-md mb-4">
                 Pilih Peran
               </h2>
 
-              {/* Container tombol horizontal */}
               <div className="flex gap-3 justify-center">
-                {/* Tombol Guru - Kiri */}
-                <button
-                  onClick={() => handleSelectRole('teacher')}
-                  className="flex flex-col items-center gap-2 px-6 py-3 rounded-xl bg-white/20 hover:bg-white/30 border border-white/30 text-white shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 backdrop-blur-sm"
-                >
-                  <BookOpen className="w-6 h-6" />
-                  <span className="font-semibold text-sm">Guru</span>
-                </button>
+  {/* Tombol Guru */}
+  <button
+    onClick={() => handleSelectRole('teacher')}
+    className="flex items-center justify-center gap-2 px-4 py-2 w-40 rounded-lg bg-blue-600 hover:bg-blue-700 text-white shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300"
+  >
+    <BookOpen className="w-5 h-5" />
+    <span className="font-semibold text-sm text-center">Guru</span>
+  </button>
 
-                {/* Tombol Siswa - Kanan */}
-                <button
-                  onClick={() => handleSelectRole('student')}
-                  className="flex flex-col items-center gap-2 px-6 py-3 rounded-xl bg-white/20 hover:bg-white/30 border border-white/30 text-white shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 backdrop-blur-sm"
-                >
-                  <GraduationCap className="w-6 h-6" />
-                  <span className="font-semibold text-sm">Siswa</span>
-                </button>
-              </div>
+  {/* Tombol Siswa */}
+  <button
+    onClick={() => handleSelectRole('student')}
+    className="flex items-center justify-center gap-2 px-4 py-2 w-40 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300"
+  >
+    <GraduationCap className="w-5 h-5" />
+    <span className="font-semibold text-sm text-center">Siswa</span>
+  </button>
+</div>
             </div>
           )}
 
           {/* STEP 2: Form Login */}
           {role !== null && (
             <div className="animate-in fade-in slide-in-from-right-4 duration-300">
-              {/* Header dengan tombol kembali */}
               <div className="flex items-center gap-3 mb-4">
                 <button
                   onClick={handleBack}
