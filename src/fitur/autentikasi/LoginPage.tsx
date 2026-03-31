@@ -74,7 +74,7 @@ export default function LoginPage() {
       className="relative min-h-screen flex items-center justify-center p-4"
       style={{
         backgroundImage:
-          "linear-gradient(rgba(15, 23, 42, 0.3), rgba(30, 58, 138, 0.3)), url('https://media.istockphoto.com/id/1500673669/pt/foto/kids-back-to-school-group-of-children.jpg?s=170667a&w=0&k=20&c=z2k56SPgdTSlIj12MrqNC0nuK9q_D5fuq_9b6J0SRnQ=')",
+          "linear-gradient(rgba(15, 23, 42, 0.3), rgba(30, 58, 138, 0.3)), url('https://blog.klikindomaret.com/wp-content/uploads/2022/07/daughter-with-school-uniform-highfive-with-mother-during-online-class-home-scaled.jpg')",
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
@@ -101,10 +101,6 @@ export default function LoginPage() {
           {/* STEP 1: Pilihan Peran */}
           {role === null && (
             <div className="space-y-4">
-              <h2 className="text-lg font-semibold text-center text-white drop-shadow-md mb-4">
-                Pilih Peran
-              </h2>
-
               <div className="flex gap-3 justify-center">
   {/* Tombol Guru */}
   <button
