@@ -74,7 +74,7 @@ export default function LoginPage() {
       className="relative min-h-screen flex items-center justify-center p-4"
       style={{
         backgroundImage:
-          "linear-gradient(rgba(15, 23, 42, 0.4), rgba(30, 58, 138, 0.4)), url('https://media.istockphoto.com/id/1500673669/pt/foto/kids-back-to-school-group-of-children.jpg?s=170667a&w=0&k=20&c=z2k56SPgdTSlIj12MrqNC0nuK9q_D5fuq_9b6J0SRnQ=')",
+          "linear-gradient(rgba(15, 23, 42, 0.3), rgba(30, 58, 138, 0.3)), url('https://media.istockphoto.com/id/1500673669/pt/foto/kids-back-to-school-group-of-children.jpg?s=170667a&w=0&k=20&c=z2k56SPgdTSlIj12MrqNC0nuK9q_D5fuq_9b6J0SRnQ=')",
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
@@ -90,41 +90,36 @@ export default function LoginPage() {
           <p className="text-blue-100 mt-1 drop-shadow-md">SMA Negeri 1 Nusantara</p>
         </div>
 
-        {/* Card */}
-        <div className="bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl p-8">
+        {/* Card - Glassmorphism tanpa background putih solid */}
+        <div className="bg-white/10 backdrop-blur-md rounded-2xl shadow-2xl p-6 border border-white/20">
 
-          {/* STEP 1: Pilihan Peran */}
+          {/* STEP 1: Pilihan Peran - Tombol Kecil Horizontal */}
           {role === null && (
             <div className="space-y-4">
-              <h2 className="text-xl font-bold text-center text-gray-800 mb-6">
-                Pilih Peran Anda
+              <h2 className="text-lg font-semibold text-center text-white drop-shadow-md mb-4">
+                Pilih Peran
               </h2>
 
-              <button
-                onClick={() => handleSelectRole('teacher')}
-                className="w-full flex items-center gap-4 p-5 rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all duration-300 group"
-              >
-                <div className="w-14 h-14 bg-white/20 rounded-full flex items-center justify-center group-hover:bg-white/30 transition-colors">
-                  <BookOpen className="w-7 h-7" />
-                </div>
-                <div className="text-left">
-                  <p className="font-bold text-lg">Guru</p>
-                  <p className="text-blue-100 text-sm">Masuk sebagai tenaga pengajar</p>
-                </div>
-              </button>
+              {/* Container tombol horizontal */}
+              <div className="flex gap-3 justify-center">
+                {/* Tombol Guru - Kiri */}
+                <button
+                  onClick={() => handleSelectRole('teacher')}
+                  className="flex flex-col items-center gap-2 px-6 py-3 rounded-xl bg-white/20 hover:bg-white/30 border border-white/30 text-white shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 backdrop-blur-sm"
+                >
+                  <BookOpen className="w-6 h-6" />
+                  <span className="font-semibold text-sm">Guru</span>
+                </button>
 
-              <button
-                onClick={() => handleSelectRole('student')}
-                className="w-full flex items-center gap-4 p-5 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 text-white shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all duration-300 group"
-              >
-                <div className="w-14 h-14 bg-white/20 rounded-full flex items-center justify-center group-hover:bg-white/30 transition-colors">
-                  <GraduationCap className="w-7 h-7" />
-                </div>
-                <div className="text-left">
-                  <p className="font-bold text-lg">Siswa</p>
-                  <p className="text-emerald-100 text-sm">Masuk sebagai peserta didik</p>
-                </div>
-              </button>
+                {/* Tombol Siswa - Kanan */}
+                <button
+                  onClick={() => handleSelectRole('student')}
+                  className="flex flex-col items-center gap-2 px-6 py-3 rounded-xl bg-white/20 hover:bg-white/30 border border-white/30 text-white shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 backdrop-blur-sm"
+                >
+                  <GraduationCap className="w-6 h-6" />
+                  <span className="font-semibold text-sm">Siswa</span>
+                </button>
+              </div>
             </div>
           )}
 
@@ -132,27 +127,24 @@ export default function LoginPage() {
           {role !== null && (
             <div className="animate-in fade-in slide-in-from-right-4 duration-300">
               {/* Header dengan tombol kembali */}
-              <div className="flex items-center gap-3 mb-6">
+              <div className="flex items-center gap-3 mb-4">
                 <button
                   onClick={handleBack}
-                  className="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-600 transition-colors"
+                  className="p-2 rounded-lg bg-white/20 hover:bg-white/30 text-white transition-colors border border-white/30"
                   title="Kembali ke pilihan peran"
                 >
                   <ArrowLeft className="w-5 h-5" />
                 </button>
                 <div>
-                  <h2 className="text-xl font-bold text-gray-800">
+                  <h2 className="text-lg font-bold text-white drop-shadow-md">
                     Masuk sebagai {role === 'teacher' ? 'Guru' : 'Siswa'}
                   </h2>
-                  <p className="text-sm text-gray-500">
-                    {role === 'teacher' ? 'Masukkan NIP dan kata sandi' : 'Masukkan NIS dan kata sandi'}
-                  </p>
                 </div>
               </div>
 
-              <form onSubmit={handleSubmit} className="space-y-4">
+              <form onSubmit={handleSubmit} className="space-y-3">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-white/90 mb-1 drop-shadow">
                     {role === 'teacher' ? 'NIP / Username' : 'NIS / Username'}
                   </label>
                   <input
@@ -160,27 +152,27 @@ export default function LoginPage() {
                     value={id}
                     onChange={e => setId(e.target.value)}
                     placeholder={role === 'teacher' ? 'Masukkan NIP' : 'Masukkan NIS'}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
+                    className="w-full px-4 py-2.5 bg-white/90 backdrop-blur-sm border border-white/30 rounded-xl focus:ring-2 focus:ring-blue-400 focus:border-transparent outline-none transition text-gray-800 placeholder-gray-500"
                     required
                     autoFocus
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Kata Sandi</label>
+                  <label className="block text-sm font-medium text-white/90 mb-1 drop-shadow">Kata Sandi</label>
                   <div className="relative">
                     <input
                       type={showPassword ? 'text' : 'password'}
                       value={password}
                       onChange={e => setPassword(e.target.value)}
                       placeholder="Masukkan kata sandi..."
-                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition pr-12"
+                      className="w-full px-4 py-2.5 bg-white/90 backdrop-blur-sm border border-white/30 rounded-xl focus:ring-2 focus:ring-blue-400 focus:border-transparent outline-none transition pr-12 text-gray-800 placeholder-gray-500"
                       required
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
                     >
                       {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                     </button>
@@ -188,17 +180,17 @@ export default function LoginPage() {
                 </div>
 
                 {error && (
-                  <div className="bg-red-50 text-red-600 text-sm px-4 py-3 rounded-xl border border-red-200">
+                  <div className="bg-red-500/80 backdrop-blur-sm text-white text-sm px-4 py-2.5 rounded-xl border border-red-400/50">
                     {error}
                   </div>
                 )}
 
                 <button
                   type="submit"
-                  className={`w-full py-3 rounded-xl text-white font-semibold flex items-center justify-center gap-2 transition-all shadow-lg hover:shadow-xl ${
+                  className={`w-full py-2.5 rounded-xl text-white font-semibold flex items-center justify-center gap-2 transition-all shadow-lg hover:shadow-xl border border-white/30 ${
                     role === 'teacher'
-                      ? 'bg-blue-600 hover:bg-blue-700'
-                      : 'bg-emerald-600 hover:bg-emerald-700'
+                      ? 'bg-blue-600/80 hover:bg-blue-700/90 backdrop-blur-sm'
+                      : 'bg-emerald-600/80 hover:bg-emerald-700/90 backdrop-blur-sm'
                   }`}
                 >
                   <LogIn className="w-5 h-5" />
@@ -207,13 +199,13 @@ export default function LoginPage() {
               </form>
 
               {/* Demo Info */}
-              <div className="mt-6 p-4 bg-amber-50 rounded-xl border border-amber-200">
-                <p className="text-xs font-semibold text-amber-700 mb-2">Demo Akun:</p>
-                <div className="text-xs text-amber-600 space-y-1">
-                  <p><strong>Guru:</strong> NIP: 198501012010011001 | Kata Sandi: guru123</p>
-                  <p><strong>Siswa:</strong> NIS: 2024001 | Kata Sandi: siswa123</p>
-                  <p><strong>Admin Guru:</strong> Pengguna: adm_guru | Kata Sandi: admin123</p>
-                  <p><strong>Admin Siswa:</strong> Pengguna: adm_siswa | Kata Sandi: admin123</p>
+              <div className="mt-4 p-3 bg-amber-500/20 backdrop-blur-sm rounded-xl border border-amber-400/30">
+                <p className="text-xs font-semibold text-amber-200 mb-1">Demo Akun:</p>
+                <div className="text-xs text-amber-100/90 space-y-0.5">
+                  <p><strong>Guru:</strong> NIP: 198501012010011001 | Pass: guru123</p>
+                  <p><strong>Siswa:</strong> NIS: 2024001 | Pass: siswa123</p>
+                  <p><strong>Admin Guru:</strong> adm_guru | Pass: admin123</p>
+                  <p><strong>Admin Siswa:</strong> adm_siswa | Pass: admin123</p>
                 </div>
               </div>
             </div>
