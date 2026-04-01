@@ -71,12 +71,24 @@ export default function LoginPage() {
 
   return (
     <div className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden p-4">
+      {/* Background Image - Full Layar */}
       <img
         src="https://asset-2.tstatic.net/trends/foto/bank/images/SISWA-SMP-BAHAGIA.jpg"
         alt="Siswa SMP Bahagia"
         className="absolute inset-0 h-full w-full object-cover"
       />
       <div className="absolute inset-0 bg-slate-900/45" />
+
+      {/* Tombol Back - Kiri Atas Layar */}
+      {role !== null && (
+        <button
+          onClick={handleBack}
+          className="absolute left-4 top-4 z-20 p-2 rounded-lg bg-white/20 hover:bg-white/30 text-white transition-colors border border-white/30 backdrop-blur-sm"
+          title="Kembali ke pilihan peran"
+        >
+          <ArrowLeft className="w-5 h-5" />
+        </button>
+      )}
 
       <div className="relative z-10 w-full max-w-5xl">
         <div className="text-center mb-6">
@@ -93,6 +105,7 @@ export default function LoginPage() {
 
         <div className="border-t border-blue-300/60 w-2/3 mx-auto mb-6" />
 
+        {/* Container Tanpa Background Hitam */}
         <div className="rounded-2xl p-6">
           {role === null && (
             <div className="space-y-4">
@@ -118,19 +131,10 @@ export default function LoginPage() {
 
           {role !== null && (
             <div className="mx-auto max-w-md animate-in fade-in slide-in-from-right-4 duration-300">
-              <div className="flex items-center gap-3 mb-4">
-                <button
-                  onClick={handleBack}
-                  className="p-2 rounded-lg bg-white/20 hover:bg-white/30 text-white transition-colors border border-white/30"
-                  title="Kembali ke pilihan peran"
-                >
-                  <ArrowLeft className="w-5 h-5" />
-                </button>
-                <div>
-                  <h2 className="text-lg font-bold text-white drop-shadow-md">
-                    Masuk sebagai {role === 'teacher' ? 'Guru' : 'Siswa'}
-                  </h2>
-                </div>
+              <div className="mb-4">
+                <h2 className="text-lg font-bold text-white drop-shadow-md">
+                  Masuk sebagai {role === 'teacher' ? 'Guru' : 'Siswa'}
+                </h2>
               </div>
 
               <form onSubmit={handleSubmit} className="space-y-3">
