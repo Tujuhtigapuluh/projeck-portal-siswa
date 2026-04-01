@@ -1,0 +1,84 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  ADMIN
+  GURU
+  MURID
+}
+
+enum AttendanceStatus {
+  HADIR
+  IZIN
+  SAKIT
+  ALPHA
+}
+
+model ClassRoom {
+  id        String    @id @default(cuid())
+  code      String    @unique
+  name      String
+  grade     String
+  students  Student[]
+  teachers  Teacher[] @relation("TeacherClasses")
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Teacher {
+  id           String      @id @default(cuid())
+  name         String
+  nip          String      @unique
+  passwordHash String
+  subject      String
+  email        String?
+  phone        String?
+  whatsapp     String?
+  avatarUrl    String?
+  classes      ClassRoom[] @relation("TeacherClasses")
+  attendances  Attendance[]
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+}
+
+model Student {
+  id           String       @id @default(cuid())
+  name         String
+  nis          String       @unique
+  passwordHash String
+  gender       String?
+  classId      String
+  classRoom    ClassRoom    @relation(fields: [classId], references: [id], onDelete: Restrict)
+  avatarUrl    String?
+  email        String?
+  phone        String?
+  address      String?
+  guardianName String?
+  attendances  Attendance[]
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+}
+
+model Attendance {
+  id          String           @id @default(cuid())
+  date        DateTime
+  status      AttendanceStatus
+  note        String?
+  studentId   String
+  student     Student          @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  teacherId   String
+  teacher     Teacher          @relation(fields: [teacherId], references: [id], onDelete: Restrict)
+  classId     String
+  classRoom   ClassRoom        @relation(fields: [classId], references: [id], onDelete: Restrict)
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  @@index([date])
+  @@index([studentId, date])
+}

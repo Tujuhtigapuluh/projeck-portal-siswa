@@ -5,6 +5,21 @@ Struktur proyek dipisah per domain fitur agar mudah dirawat, diuji, dan dikemban
 ## Peta Folder
 
 ```text
+backend/
+├─ prisma/
+│  └─ schema.prisma
+├─ src/
+│  ├─ config/
+│  │  └─ env.ts
+│  ├─ routes/
+│  │  ├─ health.route.ts
+│  │  └─ index.ts
+│  └─ server.ts
+├─ .env.example
+├─ package.json
+├─ README.md
+└─ tsconfig.json
+
 src/
 ├─ App.tsx
 ├─ main.tsx
@@ -52,6 +67,8 @@ src/
 
 ## Tanggung Jawab File Utama
 
+- `backend/src/server.ts`: entry server backend (Express API).
+- `backend/prisma/schema.prisma`: skema database PostgreSQL (Prisma).
 - `src/App.tsx`: routing utama berdasarkan peran pengguna.
 - `src/context/AuthContext.tsx`: login, logout, dan sinkronisasi data pengguna aktif.
 - `src/data/store.ts`: seluruh CRUD dan inisialisasi data localStorage.
@@ -66,3 +83,4 @@ src/
 - Ubah fitur murid: `src/fitur/murid/`
 - Ubah data default dan CRUD: `src/data/store.ts`
 - Ubah aturan autentikasi: `src/context/AuthContext.tsx`
+- Mulai backend terpusat: `backend/README.md`

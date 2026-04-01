@@ -68,6 +68,20 @@ npm run preview
 
 ```text
 .
+├─ backend/
+│  ├─ prisma/
+│  │  └─ schema.prisma
+│  ├─ src/
+│  │  ├─ config/
+│  │  │  └─ env.ts
+│  │  ├─ routes/
+│  │  │  ├─ health.route.ts
+│  │  │  └─ index.ts
+│  │  └─ server.ts
+│  ├─ .env.example
+│  ├─ package.json
+│  ├─ README.md
+│  └─ tsconfig.json
 ├─ src/
 │  ├─ App.tsx
 │  ├─ main.tsx
@@ -119,6 +133,16 @@ npm run preview
 ```
 
 Catatan detail edit cepat tetap tersedia di `STRUKTUR_PROYEK.md`.
+
+## Backend Starter
+
+Folder `backend/` sudah disiapkan sebagai landasan awal untuk migrasi ke arsitektur terpusat.
+
+- Belum terhubung langsung ke frontend saat ini.
+- Berisi starter Express + Prisma + PostgreSQL.
+- Dapat dipakai saat Anda ingin sinkronisasi data lintas perangkat secara real.
+
+Panduan lengkap ada di `backend/README.md`.
 
 ## Deploy Global
 
